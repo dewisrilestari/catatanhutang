@@ -1,0 +1,76 @@
+
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+<style type="text/css">
+  .kucing {
+  width: 100%;
+  display: inline-block;
+}
+
+</style>
+<div id="app">
+  <h2>CATATAN HUTANG</h2>
+  <p>
+    <input v-model="nama">
+    <input v-model="harga">
+    <button @click="tambahKucing">Tambah Kucing</button>
+  </p>
+  <table border="1" v-if="dataKucing.length > 0">
+    <thead>
+      <tr>
+        <th>nama</th>
+        <th>aksi</th>
+      </tr>
+    </thead>
+    <tbody v-for="(kucing, n) in dataKucing"> 
+      <td>{{kucing}}</td>
+      <td><button @click="hapusKucing(n)" >Hapus</button></td>
+    </tbody>
+  </table>
+</div>
+<script type="text/javascript">
+  const app = new Vue({
+    el: '#app',
+    data: {
+    dataKucing: [],
+    nama: null,
+    harga : null
+  },
+  mounted() {
+    if (localStorage.getItem('kucing')) {
+      try {
+        this.dataKucing = JSON.parse(localStorage.getItem('kucing'));
+      } catch(e) {
+        localStorage.removeItem('kucing');
+      }
+    }
+  },
+  methods: {
+    tambahKucing() {
+      // pastikan nama kucing sudah diisi
+      if (!this.nama) {
+        return;
+      }
+      if (!this.harga) {
+        return;
+      }
+
+      this.dataKucing.push({nama : this.nama, harga:this.harga});
+      this.nama = '';
+      this.harga= '';
+      this.simpanKucing();
+    },
+    hapusKucing(x) {
+      this.dataKucing.splice(x, 1);
+      this.simpanKucing();
+    },
+    simpanKucing() {
+      // dataKucing diserialisasi menjadi string JSON
+      const parsed = JSON.stringify(this.dataKucing);
+      localStorage.setItem('kucing', parsed);
+      
+    }
+  }
+})
+
+</script>
